@@ -14,5 +14,6 @@ do
 		i=$((i+1))
 	done
 	i="1"
+	
 	hr=$((hr+1))
 done
