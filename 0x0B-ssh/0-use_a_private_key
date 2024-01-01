@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
 # Bash script that uses ssh to connect to
 
-ssh -i ~/.ssh/school ubuntu@54.234.127.191
+# Set the server IP address or hostname
+server_address="54.172.249.133"
+
+# Use the ssh command with single-character flags
+ssh -i ~/.ssh/school ubuntu@$server_address
