@@ -1,23 +1,8 @@
 #!/usr/bin/env bash
+# installs nginx HTTP server on a server and make it listen on port 80
 
-# Update the package list
-apt-get update -y
-
-# Install nginx
-apt-get install -y nginx
-
-# Create a default HTML page with "Hello World!"
-echo "Hello World!" > /usr/share/nginx/html/index.html
-
-# Make sure nginx is listening on port 80
-sed -i 's/listen 80 default_server;/listen 80;/g' /etc/nginx/sites-available/default
-
-# Restart nginx
+apt update
+apt install -y nginx
+ufw allow 'Nginx HTTP'
+echo "Hello World!" > /var/www/html/index.html
 service nginx restart
-
-# Disable autoindexing
-sed -i '/location \/ {/a\\tautoindex off;' /etc/nginx/sites-available/default
-
-# Restart nginx again to apply changes
-service nginx restart
-
