@@ -1,44 +1,37 @@
 #!/usr/bin/env bash
+#
+# Configure Nginx so that its HTTP response contains
+# a custom header
+#
+
+# Update packages
+sudo apt update
+
+# Add HAProxy PPA
+sudo apt install -y software-properties-common
+sudo add-apt-repository ppa:vbernat/haproxy-1.8 -y
+sudo apt update
 
 # Install HAProxy
-sudo apt-get update
-sudo apt-get install -y haproxy
+sudo apt install -y haproxy=1.8.\*
 
-# Configure HAProxy
-cat <<EOL | sudo tee /etc/haproxy/haproxy.cfg > /dev/null
-global
-    log /dev/log local0
-    log /dev/log local1 notice
-    chroot /var/lib/haproxy
-    stats socket /run/haproxy/admin.sock mode 660 level admin
-    stats timeout 30s
-    user haproxy
-    group haproxy
-    daemon
+hgproxy_conf_file="/etc/haproxy/haproxy.cfg"
 
-defaults
-    log global
-    mode http
-    option httplog
-    option dontlognull
-    timeout connect 5000
-    timeout client 50000
-    timeout server 50000
+# Configure Load Balancer
+fname="frontend http"
+fbind="bind *:80"
+fmode="mode http"
+fdefault="default_backend web-backend"
+frontend="$fname\n\t$fbind\n\t$fmode\n\t$fdefault\n"
 
-frontend http_front
-    bind *:80
-    stats uri /haproxy?stats
-    default_backend http_back
+bname="backend web-backend"
+bbalance="balance roundrobin"
+bserver1="server web1 52.3.255.162:80 check"
+bserver2="server web2 100.25.215.97:80 check"
+backend="$bname\n\t$bbalance\n\t$bserver1\n\t$bserver2"
 
-backend http_back
-    balance roundrobin
-    server web-01 [STUDENT_ID]-web-01:80 check
-    server web-02 [STUDENT_ID]-web-02:80 check
-EOL
+sudo sed -i "$ a $frontend" $hgproxy_conf_file
+sudo sed -i "$ a $backend" $hgproxy_conf_file
 
-# Ensure HAProxy can be managed via an init script
-sudo sed -i 's/ENABLED=0/ENABLED=1/' /etc/default/haproxy
-
-# Restart HAProxy to apply changes
+# Restart HAProxy
 sudo service haproxy restart
-
