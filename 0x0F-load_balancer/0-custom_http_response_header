@@ -1,16 +1,31 @@
-#!/usr/bin/env bash
-# configures nginx to respond with a customized header
+#!/bin/bash
 
-apt update
-apt install -y nginx
-ufw allow 'Nginx HTTP'
-echo "Hello World!" > /var/www/html/index.html
+# Install nginx
+sudo apt update
+sudo apt install -y nginx
 
-config_file='/etc/nginx/nginx.conf'
-search='http {'
-config="${search}\n\tadd_header X-Served-By"
-if ! grep -q "$add_header X-Served-By" $config_file; then
-   sed -i "s|$search|${config} \"${HOSTNAME}\";|" $config_file
-fi
+# Configure nginx to add custom HTTP header
+sudo bash -c 'cat << EOF > /etc/nginx/sites-available/default
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
 
-service nginx restart
+    # Other existing configuration directives
+
+    location / {
+        # Add the following line to add the custom header
+        add_header X-Served-By $hostname;
+        
+        # Other existing location configuration
+    }
+}
+EOF'
+
+# Reload nginx to apply changes
+sudo systemctl reload nginx
+
+# Verify nginx configuration
+sudo nginx -t
+
+echo "Nginx configured successfully with custom HTTP response header X-Served-By."
+
