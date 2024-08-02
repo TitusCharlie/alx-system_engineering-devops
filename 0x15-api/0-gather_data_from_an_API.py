@@ -14,24 +14,31 @@ def get_employee_todo_progress(employee_id):
         employee_id (int): The ID of the employee
     """
     base_url = "https://jsonplaceholder.typicode.com"
+    todos_count = 0
+    todos_done = 0
+    titles = []
 
     # Fetch user information
-    user = requests.get(f"{base_url}/users/{employee_id}").json()
-    employee_name = user.get('name')
+    user = requests.get(f"{base_url}/users").json()
+    employee_name = None
+    for i in user:
+        if i.get('id') == employee_id:
+            employee_name = i['name']
 
     # Fetch user's todo list
-    todos = requests.get(f"{base_url}/todos",
-                         params={"userId": employee_id}).json()
-
-    total_tasks = len(todos)
-    done_tasks = [todo for todo in todos if todo.get('completed')]
-    number_of_done_tasks = len(done_tasks)
+    todos = requests.get(f"{base_url}/todos").json()
+    for i in todos:
+        if i.get('userId') == employee_id:
+            if i.get('completed') == True:
+                titles.append(i['title'])
+                todos_done += 1
+            todos_count += 1
 
     # Print the result
     print(f"Employee {employee_name} is done with\
-    tasks({number_of_done_tasks}/{total_tasks}):")
-    for task in done_tasks:
-        print(f"\t {task.get('title')}")
+          tasks({todos_done}/{todos_count}):")
+    for title in titles:
+        print(f"\t {title}")
 
 
 if __name__ == "__main__":
