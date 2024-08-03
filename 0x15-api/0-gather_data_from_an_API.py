@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 """
 check and return TODO list progress
 """
@@ -29,7 +29,7 @@ def get_employee_todo_progress(employee_id):
     todos = requests.get(f"{base_url}/todos").json()
     for i in todos:
         if i.get('userId') == employee_id:
-            if i.get('completed') == True:
+            if i.get('completed') is True:
                 titles.append(i['title'])
                 todos_done += 1
             todos_count += 1
