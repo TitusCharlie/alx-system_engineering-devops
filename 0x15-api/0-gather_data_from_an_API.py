@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-This script uses a REST API to return an employee's TODO list info progress.
+check and return TODO list progress
 """
 import requests
 import sys
@@ -35,8 +35,7 @@ def get_employee_todo_progress(employee_id):
             todos_count += 1
 
     # Print the result
-    print(f"Employee {employee_name} is done with\
-          tasks({todos_done}/{todos_count}):")
+    print(f"Employee {employee_name} is done with tasks({todos_done}/{todos_count}):")
     for title in titles:
         print(f"\t {title}")
 
