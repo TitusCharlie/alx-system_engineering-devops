@@ -23,14 +23,14 @@ def get_employee_todo_progress(employee_id):
     employee_name = None
     for i in user:
         if i.get('id') == employee_id:
-            employee_name = i['name']
+            employee_name = i.get('name')
 
     # Fetch user's todo list
     todos = requests.get(f"{base_url}/todos").json()
     for i in todos:
         if i.get('userId') == employee_id:
             if i.get('completed') is True:
-                titles.append(i['title'])
+                titles.append(i.get('title'))
                 todos_done += 1
             todos_count += 1
 
