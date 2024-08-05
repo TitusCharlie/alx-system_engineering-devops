@@ -2,9 +2,10 @@
 """
 check and return TODO list progress
 """
+import csv
 import requests
 import sys
-import csv
+
 
 
 def get_employee_todo_progress(employee_id):
@@ -46,13 +47,11 @@ def get_employee_todo_progress(employee_id):
               mode='w',
               newline='') as csvfile:
         writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
-
-        # writer.writeheader()
         for i in todos:
             if i.get('userId') == employee_id:
                 writer.writerow([employee_id,
                                 employee_name,
-                                todos_done,
+                                i.get('completed'),
                                 i.get('title')]
                                 )
 
