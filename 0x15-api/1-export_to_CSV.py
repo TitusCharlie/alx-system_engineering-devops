@@ -49,8 +49,8 @@ def get_employee_todo_progress(employee_id):
         writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
         for i in todos:
             if i.get('userId') is employee_id:
-                writer.writerow([i.get('userId'),
-                                i.get('name'),
+                writer.writerow([employee_id,
+                                employee_name,
                                 i.get('completed'),
                                 i.get('title')]
                                 )
