@@ -42,19 +42,19 @@ def get_employee_todo_progress(employee_id):
         print(f"\t {title}")
 
     #Export to csv
-    with open(f"{sys.argv[1]}.csv",
+    with open(f"{employee_id}.csv",
               mode='w',
               newline='') as csvfile:
-        format = ["USER_ID","USERNAME","TASK_COMPLETED_STATUS","TASK_TITLE"]
-        writer = csv.DictWriter(csvfile, fieldnames=format)
+        writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
 
         # writer.writeheader()
         for i in todos:
             if i.get('userId') == employee_id:
-                writer.writerow({'USER_ID': employee_id,
-                                'USERNAME' : employee_name,
-                                'TASK_COMPLETED_STATUS': todos_done,
-                                'TASK_TITLE': i.get('title')})
+                writer.writerow([employee_id,
+                                employee_name,
+                                todos_done,
+                                i.get('title')]
+                                )
 
 
 
