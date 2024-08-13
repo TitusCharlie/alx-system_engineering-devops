@@ -1,37 +1,37 @@
 #!/usr/bin/python3
-"""
-Recursive function that queries the Reddit API and returns
-a list containing the title articles for a given suubreddit.
-If no results are found for the given subreddit,
-the function should return None.
-"""
-
 import requests
 
-
-def recurse(subreddit, hotlist=[], after=""):
-	"""
-	Queries the Reddit API and returns
-	a list containing the titles of all hot articlec for a given subreddit.
-
-	- If not a valid subreddit, return None.
-	"""
-	req = requests.get(
-	    "https://www.reddit.com/r/{}/hot.json".format(subreddit),
-	    headers={"user-Agent": "Custom"},
-	    params={"after": after},
-	)
-
-	if req.status_code == 200:
-	    for get_data in req.json().get("data").get("children"):
-		dat = get_data.get("data")
-		title = dat.get("title")
-		hot_list.append(title)
-	    after = req.json().get("data").get("after")
-
-	    if after is None:
-		return hot_list
-	    else:
-		return recurse(subreddit, hot_list, after0)
-	else:
-	     return None
+def recurse(subreddit, hot_list=[], after=None):
+    # Define the base URL for the Reddit API with the subreddit and specify 'hot' posts
+    url = f"https://www.reddit.com/r/{subreddit}/hot.json"
+    
+    # Set up the parameters including 'after' for pagination
+    params = {'limit': 100, 'after': after}
+    
+    # Define custom User-Agent to avoid Too Many Requests error
+    headers = {"User-Agent": "python:subreddit.recurse:v1.0 (by /u/yourusername)"}
+    
+    # Send a GET request to the Reddit API
+    response = requests.get(url, headers=headers, params=params, allow_redirects=False)
+    
+    # Check if the response status code is 200 (OK)
+    if response.status_code == 200:
+        # Parse the JSON response
+        data = response.json()
+        # Extract the list of posts
+        posts = data.get('data', {}).get('children', [])
+        
+        # Add the titles of the posts to the hot_list
+        hot_list.extend([post.get('data', {}).get('title') for post in posts])
+        
+        # Check if there's a next page (pagination)
+        after = data.get('data', {}).get('after')
+        if after is not None:
+            # Recursively call the function to get the next page of results
+            return recurse(subreddit, hot_list, after)
+        else:
+            # If no more pages, return the hot_list
+            return hot_list
+    else:
+        # If not a valid subreddit, return None
+        return None
